@@ -1,0 +1,8 @@
+{
+  "name": "Personal Resume Webpage",
+  "description": "A simple modern personal webpage displaying resume details with Google Account login and real-time content management capabilities powered by Firebase.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

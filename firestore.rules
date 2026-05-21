@@ -1,0 +1,65 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Global Safety Net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Common global helper functions
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+    
+    function incoming() {
+      return request.resource.data;
+    }
+    
+    function existing() {
+      return resource.data;
+    }
+    
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isVerifiedUser() {
+      return isSignedIn() && request.auth.token.email_verified == true;
+    }
+
+    // Resume Document structural and type validation helper
+    function isValidResume(data) {
+      return data.fullName is string && data.fullName.size() >= 1 && data.fullName.size() <= 100
+        && data.title is string && data.title.size() <= 100
+        && data.email is string && data.email.size() <= 100
+        && (data.phone == null || (data.phone is string && data.phone.size() <= 50))
+        && (data.location == null || (data.location is string && data.location.size() <= 100))
+        && (data.website == null || (data.website is string && data.website.size() <= 300))
+        && (data.summary == null || (data.summary is string && data.summary.size() <= 8000))
+        && (data.avatarUrl == null || (data.avatarUrl is string && data.avatarUrl.size() <= 1000))
+        && (data.theme == null || (data.theme is string && data.theme.size() <= 50))
+        && data.ownerId is string && data.ownerId == request.auth.uid
+        && data.ownerEmail is string && data.ownerEmail == request.auth.token.email;
+    }
+
+    match /resumes/{resumeId} {
+      // Public Read is allowed so that clean/custom URLs or default IDs can view resumes.
+      allow read: if true;
+      
+      allow create: if isVerifiedUser() 
+        && isValidId(resumeId) 
+        && isValidResume(incoming())
+        && incoming().ownerId == request.auth.uid;
+        
+      allow update: if isVerifiedUser()
+        && isValidId(resumeId)
+        && isValidResume(incoming())
+        && incoming().ownerId == existing().ownerId
+        && incoming().ownerEmail == existing().ownerEmail;
+        
+      allow delete: if isVerifiedUser()
+        && isValidId(resumeId)
+        && existing().ownerId == request.auth.uid;
+    }
+  }
+}

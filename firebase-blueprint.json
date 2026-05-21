@@ -1,0 +1,92 @@
+{
+  "entities": {
+    "Resume": {
+      "title": "Resume",
+      "description": "A database schema for a personal resume",
+      "type": "object",
+      "properties": {
+        "fullName": {
+          "type": "string",
+          "description": "Full name of the person"
+        },
+        "title": {
+          "type": "string",
+          "description": "Professional title"
+        },
+        "email": {
+          "type": "string",
+          "description": "Contact email"
+        },
+        "phone": {
+          "type": "string",
+          "description": "Contact phone number"
+        },
+        "location": {
+          "type": "string",
+          "description": "Contact location (city, country)"
+        },
+        "website": {
+          "type": "string",
+          "description": "Personal website or portfolio URL"
+        },
+        "summary": {
+          "type": "string",
+          "description": "Professional summary or introduction"
+        },
+        "avatarUrl": {
+          "type": "string",
+          "description": "URL to profile picture"
+        },
+        "theme": {
+          "type": "string",
+          "description": "Visual theme style name"
+        },
+        "skills": {
+          "type": "array",
+          "description": "List of core skills"
+        },
+        "experience": {
+          "type": "array",
+          "description": "Work history list"
+        },
+        "education": {
+          "type": "array",
+          "description": "Education details list"
+        },
+        "projects": {
+          "type": "array",
+          "description": "Projects lists"
+        },
+        "socialLinks": {
+          "type": "array",
+          "description": "Social media links"
+        },
+        "ownerId": {
+          "type": "string",
+          "description": "UID of the owner"
+        },
+        "ownerEmail": {
+          "type": "string",
+          "description": "Email of the owner used for verification"
+        },
+        "isFeatured": {
+          "type": "boolean",
+          "description": "Flag to determine if this resume is featured"
+        }
+      },
+      "required": [
+        "fullName",
+        "title",
+        "email",
+        "ownerId",
+        "ownerEmail"
+      ]
+    }
+  },
+  "firestore": {
+    "resumes/{resumeId}": {
+      "schema": "Resume",
+      "description": "User resumes indexed by their respective owner's Firebase user ID or custom identifier"
+    }
+  }
+}
